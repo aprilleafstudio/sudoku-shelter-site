@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sudoku Shelter - Cozy Cats</title>
+<meta name="description" content="Solve sudoku, build a cozy shelter, and make cat friends. Pre-order on the App Store or pre-register on Google Play.">
+<!-- 소셜 공유 미리보기 (OG) -->
+<meta property="og:title" content="Sudoku Shelter - Cozy Cats">
+<meta property="og:description" content="Solve sudoku. Build a cozy shelter. Make cat friends.">
+<meta property="og:type" content="website">
+<!-- OG 이미지는 절대 주소 필요 — 저장소 이름이 바뀌면 아래 두 줄 주소도 수정할 것 -->
+<meta property="og:url" content="https://aprilleafstudio.github.io/sudoku-shelter-site/">
+<meta property="og:image" content="https://aprilleafstudio.github.io/sudoku-shelter-site/images/og-cover.png">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1260">
+<meta name="twitter:card" content="summary_large_image">
+<!-- 파비콘 (앱 아이콘 리사이즈) -->
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="images/favicon-192.png">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<!-- Pretendard 가변 폰트 (다이나믹 서브셋 — 쓰인 글자만 다운로드) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root {
+    --bg-hero: #8ca8e5;
+    --bg-sudoku: #fcf7ed;
+    --bg-home: #f0e3da;
+    --bg-cats: #abd1a6;
+    --bg-cta: #fffbb0;
+    --bg-footer: #353535;
+    --title-tagline: #fffda4;
+    --title-sudoku: #5980ef;
+    --title-home: #d571ff;
+    --title-cats: #006b0d;
+    --ink: #000000;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  /* 유동 스케일링: 1rem = 화면폭/39 (390px 화면에서 10px 기준).
+     창이 넓어지면 디자인 전체가 비례 확대, 최대 1.8배(18px)까지 */
+  html { font-size: min(calc(100vw / 39), 18px); }
+  /* 사파리는 문서 밖 영역(바운스·툴바 뒤편)을 body 배경색으로 칠함.
+     기본은 히어로 파란색, 페이지 하단 근처에선 JS가 푸터 회색으로 전환 */
+  html.at-bottom, html.at-bottom body { background: var(--bg-footer); }
+  img { display: block; }
+  body {
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    line-height: 1.6;
+    background: var(--bg-hero);
+  }
+
+  /* 얇은 검정 외곽선 (목업의 제목 스타일)
+     두께: 글자 25px 기준 약 0.75px (글자 크기에 비례, 태그라인과 동일) */
+  .outline-thin {
+    text-shadow:
+      -0.022em -0.022em 0 var(--ink), 0.022em -0.022em 0 var(--ink),
+      -0.022em  0.022em 0 var(--ink), 0.022em  0.022em 0 var(--ink),
+      -0.03em 0 0 var(--ink), 0.03em 0 0 var(--ink),
+      0 -0.03em 0 var(--ink), 0 0.03em 0 var(--ink);
+  }
+
+  section { padding: 5.2rem 2rem; }
+  .inner { max-width: 52rem; margin: 0 auto; }
+
+  /* ===== 히어로 ===== */
+  .hero {
+    background-color: var(--bg-hero);
+    /* 스도쿠 섹션 색 그라데이션을 발자국 위에 덮어서, 하단 240px 구간에서
+       배경색과 발자국 패턴이 함께 사라지도록 처리.
+       중간 단계(S-커브)를 넣어 시작/끝 경계선이 안 보이게 함 */
+    background-image:
+      linear-gradient(to bottom,
+        rgba(252, 247, 237, 0)    calc(100% - 24rem),
+        rgba(252, 247, 237, 0.1)  calc(100% - 19.2rem),
+        rgba(252, 247, 237, 0.35) calc(100% - 14.4rem),
+        rgba(252, 247, 237, 0.65) calc(100% - 9.6rem),
+        rgba(252, 247, 237, 0.9)  calc(100% - 4.8rem),
+        #fcf7ed 100%),
+      url("images/paw-tile.svg");
+    background-size: 100% 100%, 17rem 17rem;
+    padding-top: 3.4rem;
+    padding-bottom: 27rem;
+    overflow: hidden;
+  }
+  .hero .inner { display: flex; flex-direction: column; align-items: center; }
+  .hero-deco-top {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0 6%;
+  }
+  .hero-deco-top img { width: 7.6rem; height: auto; }
+  .hero-deco-top .deco-box { margin-top: 4.4rem; }
+  .logo { width: min(33rem, 84%); height: auto; margin-top: 0.6rem; }
+
+  /* 좌우 여백을 최소로 — "Build a cozy shelter."가 한 줄에 들어가도록. 데코는 짧은 첫 줄 옆 빈 공간에 배치 */
+  .tagline-wrap { position: relative; width: 100%; margin-top: 6rem; padding: 0 1rem; }
+  .tagline {
+    font-weight: 700; /* Pretendard-Bold */
+    font-size: 2.5rem; /* 디자인 25px, 화면폭에 비례 */
+    color: var(--title-tagline);
+    text-align: center;
+    line-height: 1.8; /* 두 문장 사이 여유 있게 (시안 기준) */
+    letter-spacing: 0.02em; /* 디자인 툴 자간 20 (20/1000em) */
+    /* 외곽선 두께: 글자 25px 기준 약 0.75px (글자 크기에 비례) */
+    text-shadow:
+      -0.022em -0.022em 0 var(--ink), 0.022em -0.022em 0 var(--ink),
+      -0.022em  0.022em 0 var(--ink), 0.022em  0.022em 0 var(--ink),
+      -0.03em 0 0 var(--ink), 0.03em 0 0 var(--ink),
+      0 -0.03em 0 var(--ink), 0 0.03em 0 var(--ink);
+  }
+  .deco-bowl { position: absolute; left: 2%; top: -3.6rem; width: 7.4rem; height: auto; }
+  .deco-sofa { position: absolute; right: 0; top: -4rem; width: 7.8rem; height: auto; }
+
+  /* 스토어 배지 */
+  .badges {
+    margin-top: 7rem;
+    display: flex;
+    gap: 1.2rem;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  /* 스토어 배지 공통 (Apple 사전주문 + Google 사전등록) — 가로 한 줄 배치, 같은 높이(구글 배지가 더 넓어 가이드라인 충족) */
+  .store-badge img { height: 5rem; width: auto; }
+  .store-badge { display: block; transition: transform 0.12s ease; }
+  .store-badge:hover { transform: translateY(-0.3rem); }
+  .store-badge:focus-visible { outline: 3px solid var(--title-tagline); outline-offset: 3px; }
+
+  /* 런칭 선물 */
+  .gift { margin-top: 4rem; width: min(32rem, 88%); height: auto; }
+  .gift-note {
+    margin-top: -0.2rem; /* 런치기프트 이미지에 살짝 겹치듯 붙임 */
+    text-align: center;
+    font-size: 1.2rem; /* 디자인 12px */
+    font-weight: 400; /* Pretendard-Regular */
+    line-height: 1.2;
+  }
+  /* 직접 그린 색연필 획 이미지 — 가로는 글줄 폭에 맞추고 세로는 원본 비례(0.8rem) 유지 */
+  .gift-note span {
+    padding: 0.2rem 1rem;
+    background: url("images/stroke-short.png") center / 100% 0.92rem no-repeat;
+  }
+  .gift-note span:last-of-type {
+    background-image: url("images/stroke-long.png");
+  }
+
+  /* ===== 기능 섹션 공통 ===== */
+  .feature { text-align: center; }
+  .feature h2 {
+    font-weight: 600; /* Pretendard-SemiBold */
+    font-size: 2.3rem; /* 디자인 23px, 화면폭에 비례 */
+    letter-spacing: 0.02em; /* 태그라인과 동일 (디자인 툴 자간 20) */
+    text-wrap: balance;
+  }
+  .copy-box {
+    /* 직접 그린 text-box.png를 원본 비율(644:80) 그대로 사용 */
+    width: min(34rem, calc(100vw - 3rem));
+    aspect-ratio: 644 / 80;
+    background: url("images/text-box.png") center / 100% 100% no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 0.1rem;
+    margin: 3.5rem auto 0;
+    font-weight: 400; /* Pretendard-Regular */
+    font-size: 1.1rem; /* 디자인 11px */
+    line-height: 1.5;
+    text-align: center;
+  }
+  .feature .art { margin: 2.8rem auto 0; }
+
+  .sec-sudoku {
+    /* 섹션을 히어로 그라데이션 구간 위로 160px 끌어올림 —
+       제목·텍스트박스가 그라데이션 중간쯤에 위치.
+       상단 16rem은 투명해서 히어로의 그라데이션+발자국이 그대로 비침 */
+    margin-top: -16rem;
+    /* 하단 200px 구간에서 쉘터 섹션 색으로 전환 (S-커브로 경계선 제거) */
+    background-image:
+      linear-gradient(to bottom,
+        rgba(240, 227, 218, 0)    calc(100% - 20rem),
+        rgba(240, 227, 218, 0.1)  calc(100% - 16rem),
+        rgba(240, 227, 218, 0.35) calc(100% - 12rem),
+        rgba(240, 227, 218, 0.65) calc(100% - 8rem),
+        rgba(240, 227, 218, 0.9)  calc(100% - 4rem),
+        #f0e3da 100%),
+      linear-gradient(to bottom,
+        rgba(252, 247, 237, 0) 16rem,
+        #fcf7ed 16rem);
+    padding-bottom: 15rem;
+  }
+  .sec-sudoku h2 { color: var(--title-sudoku); }
+  /* 여백 포함 580px(2x) 파일 — 디자인 기준 290(1x), 화면폭에 비례 */
+  .sec-sudoku .art {
+    width: min(29rem, 100vw);
+    height: auto;
+    margin: 2.8rem 0 0 50%;
+    transform: translateX(-50%);
+  }
+
+  .sec-home {
+    /* 스도쿠→쉘터 그라데이션(200px) 중간에 제목이 오도록 140px 끌어올림.
+       상단 14rem은 투명해서 스도쿠 섹션의 그라데이션이 그대로 비침 */
+    margin-top: -14rem;
+    background: linear-gradient(to bottom,
+      rgba(240, 227, 218, 0) 14rem,
+      #f0e3da 14rem);
+  }
+  .sec-home h2 { color: var(--title-home); }
+  .sec-home { padding-bottom: 0; }
+  /* 780px(2x) 파일 — 디자인 기준 390(1x) = 화면폭 전체, 비례 확대 */
+  .sec-home .art {
+    width: min(39rem, 100vw);
+    height: auto;
+    /* 파일 맨 아래 투명 여백(4x 파일 기준 약 18px = 디자인 4.5px)만큼 초록 섹션 위로 겹쳐서 마루가 경계에 딱 맞닿게 */
+    margin: 3.2rem 0 -0.45rem 50%;
+    transform: translateX(-50%);
+  }
+
+  .sec-cats { background: var(--bg-cats); }
+  .sec-cats h2 { color: var(--title-cats); }
+  .sec-cats { padding-bottom: 0; }
+  .sec-cats .art {
+    width: min(39rem, 100vw);
+    height: auto;
+    margin: 3.2rem 0 0 50%;
+    transform: translateX(-50%);
+  }
+
+  /* ===== 마지막 CTA ===== */
+  .cta {
+    background: var(--bg-cta);
+    text-align: center;
+    padding-top: 5.6rem;
+    padding-bottom: 6.4rem;
+  }
+  .cta img { width: 10.2rem; height: auto; margin: 3rem auto 0; }
+  /* 타이틀 GIF (원본 1000×140 — 고해상도) */
+  .cta .cta-title { width: 21.5rem; margin: 0 auto; }
+
+  /* ===== 푸터 ===== */
+  footer {
+    background: var(--bg-footer);
+    display: flex;
+    justify-content: space-between; /* 링크 왼쪽, 카피라이트 오른쪽 */
+    align-items: center;
+    padding: 3rem 2rem calc(4rem + env(safe-area-inset-bottom));
+  }
+  footer nav { display: flex; gap: 2.5rem; }
+  footer nav a {
+    color: #161616;
+    font-size: 0.8rem; /* 디자인 8px */
+    text-decoration: none;
+    padding: 0.6rem 0.2rem; /* 탭 영역 확보 */
+  }
+  footer nav a:hover { text-decoration: underline; }
+  footer .copyright { font-size: 0.8rem; /* 디자인 8px */ color: #161616; }
+
+  /* ===== 플로팅 CTA ===== */
+  #floating-cta {
+    position: fixed;
+    right: 1.4rem;
+    bottom: calc(1.4rem + env(safe-area-inset-bottom));
+    z-index: 100;
+    display: block;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  #floating-cta img { width: 10.8rem; height: auto; filter: drop-shadow(2px 3px 0 rgba(0, 0, 0, 0.18)); }
+  #floating-cta.hidden { opacity: 0; transform: translateY(1.4rem); pointer-events: none; }
+  #floating-cta:focus-visible { outline: 3px solid var(--title-sudoku); outline-offset: 3px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    #floating-cta, .store-badge { transition: none; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== 히어로 ===== -->
+<section class="hero">
+  <div class="inner">
+    <div class="hero-deco-top">
+      <img src="images/scratcher.gif" alt="" width="300" height="290">
+      <img class="deco-box" src="images/cardboard_box.gif" alt="" width="300" height="290">
+    </div>
+
+    <img class="logo" src="images/logo.png" alt="Sudoku Shelter" width="1320" height="300">
+
+    <div class="tagline-wrap">
+      <img class="deco-bowl" src="images/bowl.gif" alt="" width="300" height="290">
+      <p class="tagline">Solve sudoku.<br>Build a cozy shelter.</p>
+      <img class="deco-sofa" src="images/sofa.gif" alt="" width="300" height="290">
+    </div>
+
+    <div class="badges" id="badges">
+      <!-- iOS 사전주문 라이브 (App Store ID 6779143026) -->
+      <a class="store-badge" href="https://apps.apple.com/app/id6779143026">
+        <img src="Pre-order_on_the_App_Store_Badge_US-UK_RGB_blk_121217.svg" alt="Pre-order on the App Store">
+      </a>
+      <!-- Google Play 사전등록 라이브 (2026-07-05) -->
+      <a class="store-badge" href="https://play.google.com/store/apps/details?id=com.catsudoku.game">
+        <img src="PreRegisterOnGooglePlay_Badge_Web_color_english.png.png" alt="Pre-register on Google Play">
+      </a>
+    </div>
+
+    <img class="gift" src="images/launch-gift.png" alt="Launch gift: exclusive Founder cat and 300 bonus coins" width="1200" height="370">
+    <p class="gift-note"><span>Pre-register now</span><br><span>and get it on launch day</span></p>
+  </div>
+</section>
+
+<!-- ===== 스도쿠 ===== -->
+<section class="feature sec-sudoku">
+  <div class="inner">
+    <h2 class="outline-thin">Relaxing Sudoku, at Your Pace</h2>
+    <div class="copy-box">
+      <p>Three difficulties with notes, hints, and undo.<br>
+      No time limits – just you, the numbers, and a calm afternoon.</p>
+    </div>
+    <img class="art" src="images/sudoku.png" alt="Sudoku board with cat paws collecting coins" width="1160" height="1240" loading="lazy">
+  </div>
+</section>
+
+<!-- ===== 쉘터 꾸미기 ===== -->
+<section class="feature sec-home">
+  <div class="inner">
+    <h2 class="outline-thin">Turn Coins into a Cozy Home</h2>
+    <div class="copy-box">
+      <p>Every puzzle you finish earns coins. Spend them on bowls,<br>cushions, and toys to build a shelter cats can't resist.</p>
+    </div>
+  </div>
+  <img class="art" src="images/shelter.png" alt="Shelter room with a sofa, cushion, and cats" width="1560" height="760" loading="lazy">
+</section>
+
+<!-- ===== 고양이 수집 ===== -->
+<section class="feature sec-cats">
+  <div class="inner">
+    <h2 class="outline-thin">Meet a Houseful of Cats</h2>
+    <div class="copy-box">
+      <p>Shy cats drop by when you least expect it. Befriend them,<br>learn their quirks, and complete your collection of 30+&nbsp;friends.</p>
+    </div>
+  </div>
+  <img class="art" src="images/garden.png" alt="Garden map with visiting cats and collection cards" width="1560" height="1200" loading="lazy">
+</section>
+
+<!-- ===== 마지막 CTA ===== -->
+<section class="cta">
+  <img class="cta-title" src="images/endingtext.gif" alt="The cats are waiting." width="1000" height="140" loading="lazy">
+  <img src="images/ending-cat.gif" alt="A cat looking at you" width="600" height="600" loading="lazy">
+</section>
+
+<footer>
+  <nav>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="mailto:aprilleaf.studio@gmail.com">Contact</a>
+  </nav>
+  <p class="copyright">© 2026 Aprilleaf Studio</p>
+</footer>
+
+<!-- 플로팅 CTA — 히어로(배지) 지나면 등장, 푸터에선 숨김 -->
+<a id="floating-cta" class="hidden" href="https://apps.apple.com/app/id6779143026" aria-label="Pre-order now">
+  <img src="images/floating-button.png" alt="" width="440" height="456">
+</a>
+
+<script>
+  (function () {
+    var ua = navigator.userAgent || "";
+    var isIOS = /iPhone|iPad|iPod/i.test(ua);
+    var cta = document.getElementById("floating-cta");
+    var badges = document.getElementById("badges");
+
+    // Android는 Play 스토어 사전등록으로 직행, iOS는 App Store, 그 외(PC)는 배지로 스크롤
+    var isAndroid = /Android/i.test(ua);
+    if (isAndroid) {
+      cta.href = "https://play.google.com/store/apps/details?id=com.catsudoku.game";
+      cta.setAttribute("aria-label", "Pre-register now");
+      cta.querySelector("img").src = "images/floating-button-preregister.png";
+    }
+    if (!isIOS && !isAndroid) {
+      cta.addEventListener("click", function (e) {
+        e.preventDefault();
+        badges.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    }
+
+    // 배지(히어로)가 보이는 동안엔 플로팅 버튼 숨김 (푸터에서는 계속 표시)
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (en) {
+        cta.classList.toggle("hidden", en[0].isIntersecting);
+      }).observe(badges);
+    } else {
+      cta.classList.remove("hidden");
+    }
+
+    // 바운스 영역 색: 하단 근처(반 화면 이내)에선 푸터 회색, 그 외엔 히어로 파란색
+    function updateOverscrollColor() {
+      var nearBottom = window.scrollY + window.innerHeight * 1.5 >
+                       document.documentElement.scrollHeight;
+      document.documentElement.classList.toggle("at-bottom", nearBottom);
+    }
+    window.addEventListener("scroll", updateOverscrollColor, { passive: true });
+    window.addEventListener("resize", updateOverscrollColor, { passive: true });
+    updateOverscrollColor();
+  })();
+</script>
+</body>
+</html>
