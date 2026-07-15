@@ -361,8 +361,8 @@
 </footer>
 
 <!-- 플로팅 CTA — 히어로(배지) 지나면 등장, 푸터에선 숨김 -->
-<a id="floating-cta" class="hidden" href="https://apps.apple.com/app/id6779143026" aria-label="Download on the App Store">
-  <img src="Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="" width="120" height="40">
+<a id="floating-cta" class="hidden" href="https://apps.apple.com/app/id6779143026" aria-label="Play now">
+  <img src="images/floating-button.png" alt="" width="510" height="456">
 </a>
 
 <script>
@@ -376,8 +376,7 @@
     var isAndroid = /Android/i.test(ua);
     if (isAndroid) {
       cta.href = "https://play.google.com/store/apps/details?id=com.catsudoku.game";
-      cta.setAttribute("aria-label", "Get it on Google Play");
-      cta.querySelector("img").src = "GetItOnGooglePlay_Badge_Web_color_English.svg";
+      cta.setAttribute("aria-label", "Play now");
     }
     if (!isIOS && !isAndroid) {
       cta.addEventListener("click", function (e) {
