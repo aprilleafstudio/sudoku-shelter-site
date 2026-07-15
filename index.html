@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sudoku Shelter - Cozy Cats</title>
-<meta name="description" content="Solve sudoku, build a cozy shelter, and make cat friends. Pre-order on the App Store or pre-register on Google Play.">
+<meta name="description" content="Solve sudoku, build a cozy shelter, and make cat friends. Download now on the App Store and Google Play.">
 <!-- 소셜 공유 미리보기 (OG) -->
 <meta property="og:title" content="Sudoku Shelter - Cozy Cats">
 <meta property="og:description" content="Solve sudoku. Build a cozy shelter. Make cat friends.">
@@ -124,7 +124,7 @@
     align-items: center;
     flex-wrap: wrap;
   }
-  /* 스토어 배지 공통 (Apple 사전주문 + Google 사전등록) — 가로 한 줄 배치, 같은 높이(구글 배지가 더 넓어 가이드라인 충족) */
+  /* 스토어 배지 공통 (App Store + Google Play) — 가로 한 줄 배치, 같은 높이 */
   .store-badge img { height: 5rem; width: auto; }
   .store-badge { display: block; transition: transform 0.12s ease; }
   .store-badge:hover { transform: translateY(-0.3rem); }
@@ -297,18 +297,18 @@
     </div>
 
     <div class="badges" id="badges">
-      <!-- iOS 사전주문 라이브 (App Store ID 6779143026) -->
+      <!-- iOS 다운로드 (App Store ID 6779143026) -->
       <a class="store-badge" href="https://apps.apple.com/app/id6779143026">
-        <img src="Pre-order_on_the_App_Store_Badge_US-UK_RGB_blk_121217.svg" alt="Pre-order on the App Store">
+        <img src="Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on the App Store">
       </a>
-      <!-- Google Play 사전등록 라이브 (2026-07-05) -->
+      <!-- Google Play 다운로드 -->
       <a class="store-badge" href="https://play.google.com/store/apps/details?id=com.catsudoku.game">
-        <img src="PreRegisterOnGooglePlay_Badge_Web_color_english.png.png" alt="Pre-register on Google Play">
+        <img src="GetItOnGooglePlay_Badge_Web_color_English.svg" alt="Get it on Google Play">
       </a>
     </div>
 
     <img class="gift" src="images/launch-gift.png" alt="Launch gift: exclusive Founder cat and 300 bonus coins" width="1200" height="370">
-    <p class="gift-note"><span>Pre-register now</span><br><span>and get it on launch day</span></p>
+    <p class="gift-note"><span>Download now</span><br><span>and claim your launch gift</span></p>
   </div>
 </section>
 
@@ -361,8 +361,8 @@
 </footer>
 
 <!-- 플로팅 CTA — 히어로(배지) 지나면 등장, 푸터에선 숨김 -->
-<a id="floating-cta" class="hidden" href="https://apps.apple.com/app/id6779143026" aria-label="Pre-order now">
-  <img src="images/floating-button.png" alt="" width="440" height="456">
+<a id="floating-cta" class="hidden" href="https://apps.apple.com/app/id6779143026" aria-label="Download on the App Store">
+  <img src="Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="" width="120" height="40">
 </a>
 
 <script>
@@ -372,12 +372,12 @@
     var cta = document.getElementById("floating-cta");
     var badges = document.getElementById("badges");
 
-    // Android는 Play 스토어 사전등록으로 직행, iOS는 App Store, 그 외(PC)는 배지로 스크롤
+    // Android는 Google Play, iOS는 App Store로 직행. PC에서는 설치할 플랫폼을 고를 수 있도록 배지로 스크롤.
     var isAndroid = /Android/i.test(ua);
     if (isAndroid) {
       cta.href = "https://play.google.com/store/apps/details?id=com.catsudoku.game";
-      cta.setAttribute("aria-label", "Pre-register now");
-      cta.querySelector("img").src = "images/floating-button-preregister.png";
+      cta.setAttribute("aria-label", "Get it on Google Play");
+      cta.querySelector("img").src = "GetItOnGooglePlay_Badge_Web_color_English.svg";
     }
     if (!isIOS && !isAndroid) {
       cta.addEventListener("click", function (e) {
